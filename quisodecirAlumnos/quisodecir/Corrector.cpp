@@ -3,7 +3,7 @@
 	FACULTAD DE ESTUDIOS SUPERIORES -ARAGON-
 
 	Computadoras y programacion. 
-	(c) Ponga su nombre y numero de cuenta aqui.
+	(c) Alvarez Cortes Aureliano 321118590
 	
 	Quiso decir: Programa principal de la aplicacion de la distancia de Levenstein.
 	
@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include <string.h>
 #include "corrector.h"
+#define DEPURAR 1
 //Funciones publicas del proyecto
 /*****************************************************************************************************************
 	DICCIONARIO: Esta funcion crea el diccionario completo
@@ -21,13 +22,34 @@
 	int		iEstadisticas[]			:	Arreglo con el numero de veces que aparecen las palabras en el diccionario
 	int &	iNumElementos			:	Numero de elementos en el diccionario
 ******************************************************************************************************************/
-void	Diccionario			(char *szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[], int &iNumElementos)
+void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[], int& iNumElementos)
 {
+	//Abrir el archivo
+	FILE* fpdicc;
+		if (DEPURAR == 1)
+		{
+			printf("%s", szNombre);
+		}
+	fopen_s(&fpdicc, szNombre, "r");
+	//Preguntar si el archivo se abrio
+	if (fpdicc != NULL)
+	{
+		if (DEPURAR == 1)
+		{
+			printf("\nSi lo pude abrir\n");
+		}
 
-	//Sustituya estas lineas por su código
-	iNumElementos=1;
-	strcpy(szPalabras[0],"AquiVaElDiccionario");
-	iEstadisticas[0] = 1; // la primer palabra aparece solo una vez.
+		//Cerrar el archivo
+		fclose(fpdicc);
+	}
+	else
+	{
+		if (DEPURAR == 1)
+		{
+			printf("\nNo lo pude abrir\n");
+		}
+	}
+
 }
 
 /*****************************************************************************************************************
