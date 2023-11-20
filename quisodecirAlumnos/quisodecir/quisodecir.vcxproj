@@ -56,8 +56,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <HeapReserveSize>16777216</HeapReserveSize>
-      <StackReserveSize>16777216</StackReserveSize>
+      <HeapReserveSize>33554432</HeapReserveSize>
+      <StackReserveSize>33554432</StackReserveSize>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
   </ItemDefinitionGroup>

@@ -1,14 +1,2 @@
 ﻿  Corrector.cpp
-C:\Users\Usuario Final\Desktop\prueba\pruebas programacion\CYP06\Proyecto\quisodecirAlumnos\quisodecir\Corrector.cpp(59,6): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  (compiling source file '/Corrector.cpp')
-  
-C:\Users\Usuario Final\Desktop\prueba\pruebas programacion\CYP06\Proyecto\quisodecirAlumnos\quisodecir\Corrector.cpp(110,18): warning C4018: '<=': signed/unsigned mismatch
-  (compiling source file '/Corrector.cpp')
-  
-C:\Users\Usuario Final\Desktop\prueba\pruebas programacion\CYP06\Proyecto\quisodecirAlumnos\quisodecir\Corrector.cpp(190,2): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  (compiling source file '/Corrector.cpp')
-  
-C:\Users\Usuario Final\Desktop\prueba\pruebas programacion\CYP06\Proyecto\quisodecirAlumnos\quisodecir\Corrector.cpp(208,2): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  (compiling source file '/Corrector.cpp')
-  
   quisodecir.vcxproj -> C:\Users\Usuario Final\Desktop\prueba\pruebas programacion\CYP06\Proyecto\quisodecirAlumnos\Debug\quisodecir.exe
