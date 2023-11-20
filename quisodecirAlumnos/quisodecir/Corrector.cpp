@@ -239,12 +239,15 @@ void ClonaPalabras(
 
 	int longitud = strlen(szPalabramod);
 	int numCandidatas = 0;
-	
-	//añade la palabra
+
+	// Letras del alfabeto,
+	char letras[] = "abcdefghijklmnopqrstuvwxyzáéíóú";
+
+	// Añade la palabra original
 	strcpy_s(szPalabrasSugeridas[numCandidatas], TAMTOKEN, szPalabramod);
 	numCandidatas++;
 
-	// elimina un caracter
+	// Elimina un caracter
 	for (int i = 0; i < longitud; i++)
 	{
 		char palabraGenerada[TAMTOKEN];
@@ -252,7 +255,7 @@ void ClonaPalabras(
 
 		for (int j = 0; j < longitud; j++)
 		{
-			if (j != i) 
+			if (j != i)
 			{
 				palabraGenerada[indice] = szPalabramod[j];
 				indice++;
@@ -264,7 +267,7 @@ void ClonaPalabras(
 		numCandidatas++;
 	}
 
-	// Intercambia caracteres 
+	// Intercambia caracteres
 	for (int i = 0; i < longitud - 1; i++) {
 		char palabraGenerada[TAMTOKEN];
 		strcpy_s(palabraGenerada, TAMTOKEN, szPalabramod);
@@ -277,26 +280,44 @@ void ClonaPalabras(
 		numCandidatas++;
 	}
 
-	// Cambia las letras por cada letra del alfabeto
+	// Cambia las letras usando el arreglo de letras
 	for (int i = 0; i < longitud; i++) {
-		for (char letra = 'a'; letra <= 'z'; letra++) {
+		for (int j = 0; j < sizeof(letras) - 1; j++) {
 			char palabraGenerada[TAMTOKEN];
 			strcpy_s(palabraGenerada, TAMTOKEN, szPalabramod);
-			palabraGenerada[i] = letra;
+			palabraGenerada[i] = letras[j];
 
 			strcpy_s(szPalabrasSugeridas[numCandidatas], TAMTOKEN, palabraGenerada);
 			numCandidatas++;
 		}
 	}
+	// Inserta el alfabeto entre cada caracter de la palabra
+	for (int i = 0; i < longitud; i++) {
+		for (int j = 0; j < sizeof(letras) - 1; j++) {
+			//Una palabra nueva para recorrer el nulo 
+			char palabraGen[TAMTOKEN];
+			int indice = 0;
 
-	// inserta en el final para no comerse el nulo
-	for (char letra = 'a'; letra <= 'z'; letra++) {
-		szPalabramod[longitud] = letra;
-		szPalabramod[longitud + 1] = '\0';
+			for (int k = 0; k < longitud; k++) {
+				if (k == i) {
+					palabraGen[indice++] = letras[j];
+				}
+				palabraGen[indice++] = szPalabramod[k];
+			}
 
-		strcpy_s(szPalabrasSugeridas[numCandidatas], TAMTOKEN, szPalabramod);
-		numCandidatas++;
+			palabraGen[indice] = '\0';
+			strcpy_s(szPalabrasSugeridas[numCandidatas], TAMTOKEN, palabraGen);
+			numCandidatas++;
+		}
+		// Inserta al final usando el arreglo de letras
+		for (int j = 0; j < sizeof(letras) - 1; j++) {
+			szPalabramod[longitud] = letras[j];
+			szPalabramod[longitud + 1] = '\0';
+
+			strcpy_s(szPalabrasSugeridas[numCandidatas], TAMTOKEN, szPalabramod);
+			numCandidatas++;
+		}
+
+		iNumSugeridas = numCandidatas;
 	}
-
-	iNumSugeridas = numCandidatas;
 }
