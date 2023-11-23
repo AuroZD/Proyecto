@@ -104,10 +104,9 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 	//variables creadas
 	char linea[4000];
 	char PalabraDet[TAMTOKEN] = "\0";
-	int  indicePD = 0;
+	int  indicePD = 0, i;
 	iNumElementos = 0;
-	int palabrasExtras = 0;
-	char palabrasExtrasTemp[MAXLEIDAS][TAMTOKEN];
+
 	//Abrir el archivo
 	FILE* fpdicc;
 	fopen_s(&fpdicc, szNombre, "r");
@@ -127,76 +126,84 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 		{
 		
 			(fgets(linea, sizeof(linea), fpdicc));
-			if ((iNumElementos >= MAXLEIDAS))
+			
+			//Lee
+			fgets(linea, sizeof(linea), fpdicc);
+			pintatexto(linea);
+			//Convertir toda la linea a minusculas
+			for (int i = 0; linea[i] != '\0'; i++)
 			{
-				// Si se alcanza el límite, eliminar palabras duplicadas
-				OrdenaPalabras(szPalabras, iNumElementos);
-				eliminarRepetidas(szPalabras, iNumElementos, iEstadisticas);
-				pintanum(iNumElementos);
-				while (iNumElementos > MAXLEIDAS)
-				{
-					strcpy_s(palabrasExtrasTemp[palabrasExtras], TAMTOKEN, szPalabras[MAXLEIDAS]);
-					palabrasExtras++;
-					iNumElementos--;
-				}
+				linea[i] = tolower(linea[i]);
 			}
-			else
+
+			//separar las palabras
+			int longi = strlen(linea);
+			for (i = 0; i <= longi; i++)
 			{
-				pintatexto(linea);
-				int i = 0;
-				int longilinea = strlen(linea);
-				//separar las palabras
-				for (i = 0; i <= longilinea && palabrasleidas < NUMPALABRAS; i++)
+				//detectar una palabra
+				if (linea[i] == ' ' || linea[i] == '\0' || linea[i] == '\n')
 				{
+					PalabraDet[indicePD] = '\0';
+					//una vez detectada para guardar en el diccionario
+					// verifica si la palabra no esta vacia
+					if (strlen(PalabraDet) > 0)
+					{
+						// Verificar si la palabra ya existe en el arreglo
+						int indiceExistente = -1;
+						for (int j = 0; j < iNumElementos; j++)
+						{
+							if (strcmp(szPalabras[j], PalabraDet) == 0)
+							{
+								indiceExistente = j;
+								break;
+							}
+						}
 
-					//detectar una palabra
-					if (linea[i] == ' ' || linea[i] == '\0' || linea[i] == '\n') {
-						PalabraDet[indicePD] = '\0';
-
-						if (strlen(PalabraDet) > 0) {
+						if (indiceExistente != -1)
+						{
+							// La palabra ya existe, actualizar estad?sticas
+							iEstadisticas[indiceExistente]++;
+						}
+						else
+						{
+							// La palabra no existe, agregar al arreglo
 							strcpy_s(szPalabras[iNumElementos], TAMTOKEN, PalabraDet);
 							iEstadisticas[iNumElementos] = 1;
 							pintatexto(PalabraDet);
+
 							iNumElementos++;
-							palabrasleidas++;
-							indicePD = 0;
 						}
+						//reinicia la cuenta para guardar las palabras
+						indicePD = 0;
 					}
-					else {
-						if (linea[i] != ',' && linea[i] != '.' && linea[i] != '(' && linea[i] != ')' && linea[i] != '\t')
+				}
+				//Aun no es una palabra
+				else
+				{
+					//no copia caracteres especiales
+					if (linea[i] != ',' && linea[i] != '.' && linea[i] != '(' && linea[i] != ')' && linea[i] != '\t')
+					{
+						if (indicePD < TAMTOKEN - 1)
 						{
-							// Formar la palabra con los caracteres
-							PalabraDet[indicePD] = tolower(linea[i]);
+							PalabraDet[indicePD] = linea[i];
 							indicePD++;
 						}
+
 					}
-					pintanum(iNumElementos);
-
-
-
-				}
-				if (iNumElementos >= MAXLEIDAS && palabrasExtras < MAXLEIDAS)
-				{
-					strcpy_s(palabrasExtrasTemp[palabrasExtras], TAMTOKEN, PalabraDet);
-					palabrasExtras++;
 				}
 			}
+			//revisar que no falte una palabra
+			if (indicePD > 0 && strlen(PalabraDet) > 0)
+			{
+				PalabraDet[indicePD] = '\0';
+				pintatexto(PalabraDet);
+				iNumElementos++;
+			}
+			//primero se ordenan para luego quitar las repeticiones, si aun queda repeticion
+			OrdenaPalabras(szPalabras, iNumElementos);
+			//eliminarRepetidas(szPalabras, iNumElementos, iEstadisticas);
+			pintanum(iNumElementos);
 		}
-
-			
-		
-		//revisar que no falte una palabra
-		if (indicePD > 0 && strlen(PalabraDet) > 0)
-		{
-			PalabraDet[indicePD] = '\0';
-			pintatexto(PalabraDet);
-			iNumElementos++;
-		}
-		//primero se ordenan para luego quitar las repeticiones 
-		OrdenaPalabras(szPalabras, iNumElementos);
-		eliminarRepetidas(szPalabras, iNumElementos, iEstadisticas);
-		pintanum(iNumElementos);
-
 
 		//Cerrar el archivo
 		fclose(fpdicc);
@@ -209,7 +216,6 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 		}
 	}
 }
-
 
 /*****************************************************************************************************************
 	ListaCandidatas: Esta funcion recupera desde el diccionario las palabras validas y su peso
