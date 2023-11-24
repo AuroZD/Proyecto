@@ -42,23 +42,27 @@ void CambiaCadenas(char cad1[], char cad2[])
 	strcpy_s(cad1, TAMTOKEN, cad2);
 	strcpy_s(cad2, TAMTOKEN, tempo);
 }
-
-void OrdenaPalabras(char szPalabras[][TAMTOKEN], int numElementos)
+/* Algo esta mal con la funcion 
+void OrdenaPalabras(char szPalabras[][TAMTOKEN], int numElementos, int iEstadisticas[])
 {
-	//aplica metodo de burbuja
-	int i, j;
-	for (i = 0; i < numElementos - 1; i++)
+	for (int i = 0; i < numElementos - 1; i++)
 	{
-		for (j = 0; j < numElementos - i - 1; j++)
+		for (int j = i + 1; j < numElementos -1; j++)
 		{
-			//compara las cadenas para ver si debe haber un cambio 
-			if (strcmp(szPalabras[j], szPalabras[j + 1]) > 0)
+			if (strcmp(szPalabras[i], szPalabras[j]) > 0)
 			{
-				CambiaCadenas(szPalabras[j], szPalabras[j + 1]);
+				char temp[TAMTOKEN];
+				strcpy_s(temp, szPalabras[i]);
+				strcpy_s(szPalabras[i], szPalabras[j]);
+				strcpy_s(szPalabras[j], temp);
+
+				int tempEstadistica = iEstadisticas[i];
+				iEstadisticas[i] = iEstadisticas[j];
+				iEstadisticas[j] = tempEstadistica;
 			}
 		}
 	}
-}
+}*/
 void eliminarRepetidas(char szPalabras[][TAMTOKEN], int& numElementos, int iEstadisticas[]) 
 {
 	int NoRepetido = 0; 
@@ -107,6 +111,8 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 	int  indicePD = 0;
 	iNumElementos = 0;
 	int inumpalabras = 0;
+	int palabrasleidas = 0;
+	int i;
 	//Abrir el archivo
 	FILE* fpdicc;
 	fopen_s(&fpdicc, szNombre, "r");
@@ -118,20 +124,30 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 		}
 
 		//empezar lectura del archivo 
+		// Lee una línea
 
-
-		int palabrasleidas = 0;
-
-		while (!feof(fpdicc) && inumpalabras < 3000) {
-			// Lee una línea
-			fgets(linea, sizeof(linea), fpdicc);
+		while (fgets(linea, sizeof(linea), fpdicc) != NULL) 
+		{
 			pintatexto(linea);
 
 			// Convertir toda la línea a minúsculas
-			for (int i = 0; linea[i] != '\0'; i++) {
+			for ( i = 0; linea[i] != '\0'; i++)
+			{
 				linea[i] = tolower(linea[i]);
 			}
+			// Eliminar espacios en blanco al principio y al final de la línea
+			i = 0;
+			while (linea[i] == ' ' || linea[i] == '\t') 
+			{
+				i++;
+			}
 
+			int j = strlen(linea) - 1;
+			while (linea[j] == ' ' || linea[j] == '\t')
+			{
+				linea[j] = '\0';
+				j--;
+			}
 			// Procesar cada carácter de la línea
 			for (int i = 0; linea[i] != '\0'; i++) {
 				char caracter = linea[i];
@@ -216,7 +232,7 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 				iNumElementos++;
 			}
 			//primero se ordenan para luego quitar las repeticiones, si aun queda repeticion
-			OrdenaPalabras(szPalabras, iNumElementos);
+			OrdenaPalabras(szPalabras, iNumElementos, iEstadisticas);
 			//eliminarRepetidas(szPalabras, iNumElementos, iEstadisticas);
 			pintanum(iNumElementos);
 		
