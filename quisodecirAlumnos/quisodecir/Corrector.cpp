@@ -14,7 +14,7 @@
 #include <string.h>
 #include "corrector.h"
 #include <ctype.h>
-#define DEPURAR 1
+#define DEPURAR 0
 #define MAXLEIDAS 69000
 //Funciones para pintar 
 void pintanum(int numero)
@@ -104,9 +104,9 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 	//variables creadas
 	char linea[4000];
 	char PalabraDet[TAMTOKEN] = "\0";
-	int  indicePD = 0, i;
+	int  indicePD = 0;
 	iNumElementos = 0;
-
+	int inumpalabras = 0;
 	//Abrir el archivo
 	FILE* fpdicc;
 	fopen_s(&fpdicc, szNombre, "r");
@@ -122,76 +122,92 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 
 		int palabrasleidas = 0;
 
-		while(!feof(fpdicc))
-		{
-		
-			(fgets(linea, sizeof(linea), fpdicc));
-			
-			//Lee
+		while (!feof(fpdicc) && inumpalabras < 3000) {
+			// Lee una línea
 			fgets(linea, sizeof(linea), fpdicc);
 			pintatexto(linea);
-			//Convertir toda la linea a minusculas
-			for (int i = 0; linea[i] != '\0'; i++)
-			{
+
+			// Convertir toda la línea a minúsculas
+			for (int i = 0; linea[i] != '\0'; i++) {
 				linea[i] = tolower(linea[i]);
 			}
 
-			//separar las palabras
-			int longi = strlen(linea);
-			for (i = 0; i <= longi; i++)
-			{
-				//detectar una palabra
-				if (linea[i] == ' ' || linea[i] == '\0' || linea[i] == '\n')
-				{
-					PalabraDet[indicePD] = '\0';
-					//una vez detectada para guardar en el diccionario
-					// verifica si la palabra no esta vacia
-					if (strlen(PalabraDet) > 0)
-					{
+			// Procesar cada carácter de la línea
+			for (int i = 0; linea[i] != '\0'; i++) {
+				char caracter = linea[i];
+
+				// Verifica si el carácter es un delimitador de palabra
+				if (caracter == ' ' || caracter == '\t' || caracter == '\n' || caracter == ',' || caracter == ';' || caracter == '(' || caracter == ')' || caracter == '.' || caracter == '\r') {
+					// Verifica si la palabra actual no está vacía
+					if (indicePD > 0) {
+						// Termina la palabra actual y la guarda en el diccionario
+						PalabraDet[indicePD] = '\0';
+
 						// Verificar si la palabra ya existe en el arreglo
 						int indiceExistente = -1;
-						for (int j = 0; j < iNumElementos; j++)
-						{
-							if (strcmp(szPalabras[j], PalabraDet) == 0)
-							{
+						int existe = 1;
+						for (int j = 0; j < iNumElementos && existe == 1; j++) {
+							if (strcmp(szPalabras[j], PalabraDet) == 0) {
 								indiceExistente = j;
-								break;
+								existe = 0;
 							}
 						}
 
-						if (indiceExistente != -1)
-						{
-							// La palabra ya existe, actualizar estad?sticas
+						if (indiceExistente != -1) {
+							// La palabra ya existe, actualizar estadísticas
 							iEstadisticas[indiceExistente]++;
 						}
-						else
-						{
+						else {
 							// La palabra no existe, agregar al arreglo
-							strcpy_s(szPalabras[iNumElementos], TAMTOKEN, PalabraDet);
-							iEstadisticas[iNumElementos] = 1;
-							pintatexto(PalabraDet);
-
-							iNumElementos++;
+							if (strcmp(PalabraDet, ",") != 0 && strcmp(PalabraDet, ".") != 0 && strcmp(PalabraDet, "(") != 0 && strcmp(PalabraDet, ")") != 0 && strcmp(PalabraDet, ";") != 0) {
+								strcpy_s(szPalabras[iNumElementos], TAMTOKEN, PalabraDet);
+								iEstadisticas[iNumElementos] = 1;
+								iNumElementos++;
+							}
 						}
-						//reinicia la cuenta para guardar las palabras
+
+						// Reiniciar la palabra actual
 						indicePD = 0;
 					}
 				}
-				//Aun no es una palabra
-				else
-				{
-					//no copia caracteres especiales
-					if (linea[i] != ',' && linea[i] != '.' && linea[i] != '(' && linea[i] != ')' && linea[i] != '\t')
-					{
-						if (indicePD < TAMTOKEN - 1)
-						{
-							PalabraDet[indicePD] = linea[i];
-							indicePD++;
+				else {
+					// Agregar el carácter a la palabra actual si no es un delimitador
+					if (indicePD < TAMTOKEN - 1) {
+						if (caracter != ',' && caracter != '.' && caracter != '(' && caracter != ')' && caracter != ';' && caracter != '.') {
+							PalabraDet[indicePD++] = caracter;
 						}
+						else if (caracter == '.') {
+							// Si es un punto, guarda la palabra actual y reinicia para el próximo token
+							if (indicePD > 0) {
+								PalabraDet[indicePD] = '\0';
 
+								int indiceExistente = -1;
+								int existe = 1;
+								for (int j = 0; j < iNumElementos && existe == 1; j++) {
+									if (strcmp(szPalabras[j], PalabraDet) == 0) {
+										indiceExistente = j;
+										existe = 0;
+									}
+								}
+
+								if (indiceExistente != -1) {
+									iEstadisticas[indiceExistente]++;
+								}
+								else {
+									if (strcmp(PalabraDet, ",") != 0 && strcmp(PalabraDet, ".") != 0 && strcmp(PalabraDet, "(") != 0 && strcmp(PalabraDet, ")") != 0 && strcmp(PalabraDet, ";") != 0) {
+										strcpy_s(szPalabras[iNumElementos], TAMTOKEN, PalabraDet);
+										iEstadisticas[iNumElementos] = 1;
+										iNumElementos++;
+									}
+								}
+
+								indicePD = 0;
+							}
+						}
 					}
 				}
 			}
+		}
 			//revisar que no falte una palabra
 			if (indicePD > 0 && strlen(PalabraDet) > 0)
 			{
@@ -203,9 +219,9 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 			OrdenaPalabras(szPalabras, iNumElementos);
 			//eliminarRepetidas(szPalabras, iNumElementos, iEstadisticas);
 			pintanum(iNumElementos);
-		}
+		
 
-		//Cerrar el archivo
+		//cerrar el archivo
 		fclose(fpdicc);
 	}
 	else
@@ -322,6 +338,7 @@ void ClonaPalabras(
 	char szPalabrasSugeridas[][TAMTOKEN],
 	int& iNumSugeridas)
 {
+	int i, j;
 	// Captura la palabra para modificarla
 	char szPalabramod[TAMTOKEN];
 	strcpy_s(szPalabramod, TAMTOKEN, szPalabraLeida);
@@ -337,12 +354,12 @@ void ClonaPalabras(
 	numCandidatas++;
 
 	// Elimina un caracter
-	for (int i = 0; i < longitud; i++)
+	for (i = 0; i < longitud; i++)
 	{
 		char palabraGenerada[TAMTOKEN];
 		int indice = 0;
 
-		for (int j = 0; j < longitud; j++)
+		for (j = 0; j < longitud; j++)
 		{
 			if (j != i)
 			{
@@ -357,7 +374,7 @@ void ClonaPalabras(
 	}
 
 	// Intercambia caracteres
-	for (int i = 0; i < longitud - 1; i++) {
+	for (i = 0; i < longitud - 1; i++) {
 		char palabraGenerada[TAMTOKEN];
 		strcpy_s(palabraGenerada, TAMTOKEN, szPalabramod);
 
@@ -370,8 +387,8 @@ void ClonaPalabras(
 	}
 
 	// Cambia las letras usando el arreglo de letras
-	for (int i = 0; i < longitud; i++) {
-		for (int j = 0; j < sizeof(letras) - 1; j++) {
+	for (i = 0; i < longitud; i++) {
+		for ( j = 0; j < sizeof(letras) - 1; j++) {
 			char palabraGenerada[TAMTOKEN];
 			strcpy_s(palabraGenerada, TAMTOKEN, szPalabramod);
 			palabraGenerada[i] = letras[j];
@@ -381,8 +398,8 @@ void ClonaPalabras(
 		}
 	}
 	// Inserta el alfabeto entre cada caracter de la palabra
-	for (int i = 0; i < longitud; i++) {
-		for (int j = 0; j < sizeof(letras) - 1; j++) {
+	for (i = 0; i < longitud; i++) {
+		for (j = 0; j < sizeof(letras) - 1; j++) {
 			//Una palabra nueva para recorrer el nulo 
 			char palabraGen[TAMTOKEN];
 			int indice = 0;
@@ -401,7 +418,7 @@ void ClonaPalabras(
 		
 	}
 	// Inserta al final usando el arreglo de letras
-	for (int j = 0; j < sizeof(letras) - 1; j++) {
+	for (j = 0; j < sizeof(letras) - 1; j++) {
 		szPalabramod[longitud] = letras[j];
 		szPalabramod[longitud + 1] = '\0';
 
