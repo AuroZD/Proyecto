@@ -42,58 +42,58 @@ void CambiaCadenas(char cad1[], char cad2[])
 	strcpy_s(cad1, TAMTOKEN, cad2);
 	strcpy_s(cad2, TAMTOKEN, tempo);
 }
-/* Algo esta mal con la funcion 
-void OrdenaPalabras(char szPalabras[][TAMTOKEN], int numElementos, int iEstadisticas[])
-{
-	for (int i = 0; i < numElementos - 1; i++)
-	{
-		for (int j = i + 1; j < numElementos -1; j++)
-		{
-			if (strcmp(szPalabras[i], szPalabras[j]) > 0)
-			{
-				char temp[TAMTOKEN];
-				strcpy_s(temp, szPalabras[i]);
-				strcpy_s(szPalabras[i], szPalabras[j]);
-				strcpy_s(szPalabras[j], temp);
-
-				int tempEstadistica = iEstadisticas[i];
-				iEstadisticas[i] = iEstadisticas[j];
-				iEstadisticas[j] = tempEstadistica;
-			}
-		}
-	}
-}*/
-void eliminarRepetidas(char szPalabras[][TAMTOKEN], int& numElementos, int iEstadisticas[]) 
-{
-	int NoRepetido = 0; 
-	// Índice para palabras no repetidas
-
-	for (int i = 0; i < numElementos; i++) {
-		int j = 0, esRepetida = 0;
-
-		// revisa si se repite
-		while (j < NoRepetido && !esRepetida)
-		{
-			if (strcmp(szPalabras[i], szPalabras[j]) == 0)
-			{
-				// si se repite incrementa
-				iEstadisticas[j]++;
-				esRepetida = 1;
-			}
-			j++;
-		}
-
-		if (!esRepetida) 
-		{
-			// La palabra no es repetida, y la cambia 
-			strcpy_s(szPalabras[NoRepetido], TAMTOKEN, szPalabras[i]);
-			iEstadisticas[NoRepetido] = iEstadisticas[i];
-			NoRepetido++;
-		}
-	}
-	//cambia los elementos no repetidos 
-	numElementos = NoRepetido;
-}
+///* Algo esta mal con la funcion 
+//void OrdenaPalabras(char szPalabras[][TAMTOKEN], int numElementos, int iEstadisticas[])
+//{
+//	for (int i = 0; i < numElementos - 1; i++)
+//	{
+//		for (int j = i + 1; j < numElementos -1; j++)
+//		{
+//			if (strcmp(szPalabras[i], szPalabras[j]) > 0)
+//			{
+//				char temp[TAMTOKEN];
+//				strcpy_s(temp, szPalabras[i]);
+//				strcpy_s(szPalabras[i], szPalabras[j]);
+//				strcpy_s(szPalabras[j], temp);
+//
+//				int tempEstadistica = iEstadisticas[i];
+//				iEstadisticas[i] = iEstadisticas[j];
+//				iEstadisticas[j] = tempEstadistica;
+//			}
+//		}
+//	}
+//}*/
+//void eliminarRepetidas(char szPalabras[][TAMTOKEN], int& numElementos, int iEstadisticas[]) 
+//{
+//	int NoRepetido = 0; 
+//	// Índice para palabras no repetidas
+//
+//	for (int i = 0; i < numElementos; i++) {
+//		int j = 0, esRepetida = 0;
+//
+//		// revisa si se repite
+//		while (j < NoRepetido && !esRepetida)
+//		{
+//			if (strcmp(szPalabras[i], szPalabras[j]) == 0)
+//			{
+//				// si se repite incrementa
+//				iEstadisticas[j]++;
+//				esRepetida = 1;
+//			}
+//			j++;
+//		}
+//
+//		if (!esRepetida) 
+//		{
+//			// La palabra no es repetida, y la cambia 
+//			strcpy_s(szPalabras[NoRepetido], TAMTOKEN, szPalabras[i]);
+//			iEstadisticas[NoRepetido] = iEstadisticas[i];
+//			NoRepetido++;
+//		}
+//	}
+//	//cambia los elementos no repetidos 
+//	numElementos = NoRepetido;
+//}
 
 //Funciones publicas del proyecto
 /*****************************************************************************************************************
@@ -110,9 +110,8 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 	char PalabraDet[TAMTOKEN] = "\0";
 	int  indicePD = 0;
 	iNumElementos = 0;
-	int inumpalabras = 0;
-	int palabrasleidas = 0;
-	int i;
+	
+	int i, j;
 	//Abrir el archivo
 	FILE* fpdicc;
 	fopen_s(&fpdicc, szNombre, "r");
@@ -124,37 +123,37 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 		}
 
 		//empezar lectura del archivo 
-		// Lee una línea
+		// Lee una l?nea
 
-		while (fgets(linea, sizeof(linea), fpdicc) != NULL) 
+		while (fgets(linea, sizeof(linea), fpdicc) != NULL)
 		{
 			pintatexto(linea);
 
-			// Convertir toda la línea a minúsculas
-			for ( i = 0; linea[i] != '\0'; i++)
+			// Convertir toda la l?nea a min?sculas
+			for (i = 0; linea[i] != '\0'; i++)
 			{
 				linea[i] = tolower(linea[i]);
 			}
-			// Eliminar espacios en blanco al principio y al final de la línea
+			// Eliminar espacios en blanco al principio y al final de la l?nea
 			i = 0;
-			while (linea[i] == ' ' || linea[i] == '\t') 
+			while (linea[i] == ' ' || linea[i] == '\t')
 			{
 				i++;
 			}
 
-			int j = strlen(linea) - 1;
+			j = strlen(linea) - 1;
 			while (linea[j] == ' ' || linea[j] == '\t')
 			{
 				linea[j] = '\0';
 				j--;
 			}
-			// Procesar cada carácter de la línea
-			for (int i = 0; linea[i] != '\0'; i++) {
+			// Procesar cada car?cter de la l?nea
+			for (i = 0; linea[i] != '\0'; i++) {
 				char caracter = linea[i];
 
-				// Verifica si el carácter es un delimitador de palabra
+				// Verifica si el car?cter es un delimitador de palabra
 				if (caracter == ' ' || caracter == '\t' || caracter == '\n' || caracter == ',' || caracter == ';' || caracter == '(' || caracter == ')' || caracter == '.' || caracter == '\r') {
-					// Verifica si la palabra actual no está vacía
+					// Verifica si la palabra actual no est? vac?a
 					if (indicePD > 0) {
 						// Termina la palabra actual y la guarda en el diccionario
 						PalabraDet[indicePD] = '\0';
@@ -162,7 +161,7 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 						// Verificar si la palabra ya existe en el arreglo
 						int indiceExistente = -1;
 						int existe = 1;
-						for (int j = 0; j < iNumElementos && existe == 1; j++) {
+						for (j = 0; j < iNumElementos && existe == 1; j++) {
 							if (strcmp(szPalabras[j], PalabraDet) == 0) {
 								indiceExistente = j;
 								existe = 0;
@@ -170,7 +169,7 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 						}
 
 						if (indiceExistente != -1) {
-							// La palabra ya existe, actualizar estadísticas
+							// La palabra ya existe, actualizar estad?sticas
 							iEstadisticas[indiceExistente]++;
 						}
 						else {
@@ -187,56 +186,79 @@ void	Diccionario(char* szNombre, char szPalabras[][TAMTOKEN], int iEstadisticas[
 					}
 				}
 				else {
-					// Agregar el carácter a la palabra actual si no es un delimitador
-					if (indicePD < TAMTOKEN - 1) {
-						if (caracter != ',' && caracter != '.' && caracter != '(' && caracter != ')' && caracter != ';' && caracter != '.') {
-							PalabraDet[indicePD++] = caracter;
-						}
-						else if (caracter == '.') {
-							// Si es un punto, guarda la palabra actual y reinicia para el próximo token
-							if (indicePD > 0) {
-								PalabraDet[indicePD] = '\0';
+					// Agregar el car?cter a la palabra actual si no es un delimitador
+					if (indicePD < TAMTOKEN - 1)
+					{
+						PalabraDet[indicePD++] = caracter;
+					}
+				}		
+				if (linea[i + 1] == ' ' || linea[i + 1] == '\t' || linea[i + 1] == '\n' || linea[i + 1] == ',' || linea[i + 1] ==
+					';' || linea[i + 1] == '(' || linea[i + 1] == ')' || linea[i + 1] == '.' || linea[i + 1] == '\0' || linea[i + 1] == '\r')
+				{
+					// Termina la palabra actual
+					PalabraDet[indicePD] = '\0';
 
-								int indiceExistente = -1;
-								int existe = 1;
-								for (int j = 0; j < iNumElementos && existe == 1; j++) {
-									if (strcmp(szPalabras[j], PalabraDet) == 0) {
-										indiceExistente = j;
-										existe = 0;
-									}
-								}
+					// Verifica si la palabra actual no está vacía y la procesa si es necesario
+					if (indicePD > 0)
+					{
 
-								if (indiceExistente != -1) {
-									iEstadisticas[indiceExistente]++;
-								}
-								else {
-									if (strcmp(PalabraDet, ",") != 0 && strcmp(PalabraDet, ".") != 0 && strcmp(PalabraDet, "(") != 0 && strcmp(PalabraDet, ")") != 0 && strcmp(PalabraDet, ";") != 0) {
-										strcpy_s(szPalabras[iNumElementos], TAMTOKEN, PalabraDet);
-										iEstadisticas[iNumElementos] = 1;
-										iNumElementos++;
-									}
-								}
+						PalabraDet[indicePD] = '\0';
 
-								indicePD = 0;
+						int indiceExistente = -1;
+						int existe = 1;
+						for (j = 0; j < iNumElementos && existe == 1; j++) {
+							if (strcmp(szPalabras[j], PalabraDet) == 0) {
+								indiceExistente = j;
+								existe = 0;
 							}
 						}
+
+						if (indiceExistente != -1) {
+							iEstadisticas[indiceExistente]++;
+						}
+						else {
+							if (strcmp(PalabraDet, ",") != 0 && strcmp(PalabraDet, ".") != 0 && strcmp(PalabraDet, "(") != 0 && strcmp(PalabraDet, ")") != 0 && strcmp(PalabraDet, ";") != 0) {
+								strcpy_s(szPalabras[iNumElementos], TAMTOKEN, PalabraDet);
+								iEstadisticas[iNumElementos] = 1;
+								iNumElementos++;
+							}
+						}
+
+						indicePD = 0;
+
 					}
 				}
+				
 			}
 		}
-			//revisar que no falte una palabra
-			if (indicePD > 0 && strlen(PalabraDet) > 0)
-			{
-				PalabraDet[indicePD] = '\0';
-				pintatexto(PalabraDet);
-				iNumElementos++;
-			}
+		
+		/*
+			Las funciones ya no se ocupan por el momento
 			//primero se ordenan para luego quitar las repeticiones, si aun queda repeticion
 			OrdenaPalabras(szPalabras, iNumElementos, iEstadisticas);
 			//eliminarRepetidas(szPalabras, iNumElementos, iEstadisticas);
 			pintanum(iNumElementos);
-		
+		*/
+		// Burbujeo
+		for ( i = 0; i < iNumElementos - 1; i++)
+		{
+			for ( j = i + 1; j < iNumElementos ; j++) 
+			{
+				if (strcmp(szPalabras[i], szPalabras[j]) > 0)
+				{
+					char temp[TAMTOKEN];
+					strcpy_s(temp,TAMTOKEN, szPalabras[i]);
+					strcpy_s(szPalabras[i], szPalabras[j]);
+					strcpy_s(szPalabras[j], temp);
 
+					int tempEstadistica = iEstadisticas[i];
+					iEstadisticas[i] = iEstadisticas[j];
+					iEstadisticas[j] = tempEstadistica;
+				}
+			}
+		}
+
+		
 		//cerrar el archivo
 		fclose(fpdicc);
 	}
@@ -294,7 +316,6 @@ void	ListaCandidatas		(
 	
 	//reinicio de variables 
 	i = 0;
-	j = 0;
 	while (iNumLista > i)
 	{
 		for (j = i + 1; j < iNumLista; j++ )
@@ -442,5 +463,48 @@ void ClonaPalabras(
 		numCandidatas++;
 	}
 
-	iNumSugeridas = numCandidatas;
+	for (i = 0; i < numCandidatas - 1; i++)
+	{
+		for (j = i + 1; j < numCandidatas; j++)
+		{
+			if (strcmp(szPalabrasSugeridas[i], szPalabrasSugeridas[j]) > 0)
+			{
+				char temp[TAMTOKEN];
+				strcpy_s(temp,TAMTOKEN, szPalabrasSugeridas[i]);
+				strcpy_s(szPalabrasSugeridas[i], TAMTOKEN, szPalabrasSugeridas[j]);
+				strcpy_s(szPalabrasSugeridas[j], TAMTOKEN, temp);
+
+		
+			}
+		}
+	}
+
+	int NoRepetido = 0;
+	// Índice para palabras no repetidas
+
+	for (i = 0; i < numCandidatas; i++) {
+		int  esRepetida = 0;
+		j = 0 ;
+		// revisa si se repite
+		while (j < NoRepetido && !esRepetida)
+		{
+			if (strcmp(szPalabrasSugeridas[i], szPalabrasSugeridas[j]) == 0)
+			{
+				// si se repite incrementa
+				esRepetida = 1;
+				numCandidatas--;
+			}
+			j++;
+		}
+
+		if (!esRepetida)
+		{
+			// La palabra no es repetida, y la cambia 
+			strcpy_s(szPalabrasSugeridas[NoRepetido], TAMTOKEN, szPalabrasSugeridas[i]);
+			NoRepetido++;
+		}
+	}
+	//cambia los elementos no repetidos 
+
+	iNumSugeridas = NoRepetido;
 }
